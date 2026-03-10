@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Berber Yönetim</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--dark:#1A1208;--gold:#C8952A;--gold-light:#E8B84B;--brown:#6B4C2A;--red:#C0392B;--green:#27AE60;--card-bg:#FFFDF8;--border:#E8DCC8;--radius:18px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--dark);min-height:100vh;overflow-x:hidden}
+.header{background:var(--dark);padding:16px 18px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.3)}
+.hlogo{display:flex;align-items:center;gap:10px}
+.htitle{font-family:'Playfair Display',serif;font-size:19px;font-weight:900;color:var(--gold-light);line-height:1}
+.htitle span{color:#fff;font-size:10px;display:block;font-family:'DM Sans',sans-serif;font-weight:400;letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.hdate{font-size:11px;color:#aaa;text-align:right;line-height:1.5}
+.hdate strong{color:var(--gold-light);display:block;font-size:13px}
+.nav{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-btn{flex:1;min-width:68px;padding:10px 4px;border:none;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:#999;transition:all .2s;border-bottom:3px solid transparent;text-align:center}
+.nav-btn .ni{font-size:17px;display:block;margin-bottom:2px}
+.nav-btn.active{color:var(--gold);border-bottom-color:var(--gold);background:#FFFBF0}
+.page{display:none;padding:14px}
+.page.active{display:block}
+.stitle{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark);margin-bottom:3px;margin-top:6px}
+.ssub{font-size:12px;color:#888;margin-bottom:14px}
+.btabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.btab{padding:8px 14px;border-radius:50px;border:2px solid var(--border);background:#fff;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;color:var(--dark)}
+.btab.active{background:var(--dark);border-color:var(--dark);color:var(--gold-light)}
+.customer-row{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:11px 14px;margin-bottom:13px;display:flex;align-items:center;gap:9px}
+.customer-row input{flex:1;border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;color:var(--dark);background:transparent}
+.customer-row input::placeholder{color:#bbb;font-weight:400}
+.menu-group{margin-bottom:17px}
+.mgtitle{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);padding-left:10px;border-left:3px solid var(--gold);margin-bottom:8px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.scard{background:var(--card-bg);border:2px solid var(--border);border-radius:var(--radius);padding:12px 10px;cursor:pointer;transition:all .15s;text-align:center;user-select:none;position:relative}
+.scard:active{transform:scale(.96)}
+.scard.sel{border-color:var(--gold);background:#FFF8E8}
+.scard .si{font-size:22px;margin-bottom:4px}
+.scard .sn{font-size:12px;font-weight:600;color:var(--dark)}
+.scard .sp{font-size:14px;font-weight:700;color:var(--gold);margin-top:3px}
+.scard .sc{position:absolute;top:-8px;right:-8px;background:var(--gold);color:#fff;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:700;display:none;align-items:center;justify-content:center}
+.scard.sel .sc{display:flex}
+.qty-row{display:flex;align-items:center;justify-content:center;gap:11px;margin-top:6px}
+.qbtn{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--dark);transition:all .15s}
+.qbtn:active{background:var(--gold);color:#fff;border-color:var(--gold)}
+.qnum{font-size:14px;font-weight:700;min-width:16px;text-align:center}
+.add-btn{width:100%;padding:15px;background:var(--dark);color:var(--gold-light);border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:13px;transition:all .2s}
+.add-btn:active{background:var(--gold);color:#fff}
+.add-btn:disabled{background:#ccc;color:#999;cursor:not-allowed}
+.elist{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.ecard{background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:11px 13px;display:flex;align-items:center;justify-content:space-between;animation:sIn .3s ease}
+@keyframes sIn{from{opacity:0;transform:translateY(-7px)}to{opacity:1;transform:translateY(0)}}
+.eleft{flex:1}
+.ebarber{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.ecustomer{font-size:13px;font-weight:700;color:var(--dark)}
+.eservice{font-size:12px;color:#666;margin-top:1px}
+.etime{font-size:10px;color:#bbb;white-space:nowrap;margin:0 7px}
+.eprice{font-size:15px;font-weight:700;color:var(--green);white-space:nowrap}
+.edel{background:none;border:none;font-size:17px;cursor:pointer;color:#ddd;padding:4px 2px 4px 9px;transition:color .2s}
+.edel:active{color:var(--red)}
+.badge{display:inline-block;padding:2px 7px;border-radius:50px;font-size:9px;font-weight:600;margin-left:4px}
+.b-sac{background:#EBF5FB;color:#1A5276}.b-sakal{background:#FEF9E7;color:#7D6608}.b-yikama{background:#E8F8F5;color:#1A6653}
+.b-boya{background:#F5EEF8;color:#6C3483}.b-kombo{background:#F9EBEA;color:#922B21}.b-diger{background:#EAFAF1;color:#1E8449}
+.sgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.scard2{background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:13px 11px;text-align:center}
+.scard2.full{grid-column:1/-1}
+.scard2.gbg{background:#F0FBF4;border-color:#A9DFBF}
+.scard2.rbg{background:#FDF2F2;border-color:#F1948A}
+.sicon{font-size:24px;margin-bottom:4px}
+.slabel{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px}
+.sval{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--dark)}
+.sval.green{color:var(--green)}.sval.gold{color:var(--gold)}.sval.red{color:var(--red)}
+.brow{background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:11px 13px;margin-bottom:8px;display:flex;align-items:center}
+.bavatar{width:36px;height:36px;border-radius:50%;background:var(--dark);display:flex;align-items:center;justify-content:center;font-size:15px;margin-right:10px;flex-shrink:0}
+.binfo{flex:1}
+.bname{font-size:13px;font-weight:600;color:var(--dark)}
+.bsub{font-size:11px;color:#888;margin-top:1px}
+.btotal{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--gold)}
+.datebar,.msel{display:flex;gap:7px;overflow-x:auto;margin-bottom:13px;scrollbar-width:none;padding-bottom:3px}
+.datebar::-webkit-scrollbar,.msel::-webkit-scrollbar{display:none}
+.dchip,.mchip{flex-shrink:0;padding:6px 13px;border-radius:50px;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:12px;font-weight:500;color:#666;transition:all .2s}
+.dchip.active,.mchip.active{background:var(--dark);border-color:var(--dark);color:var(--gold-light)}
+.empty{text-align:center;padding:42px 20px;color:#bbb}
+.eico{font-size:50px;margin-bottom:9px}
+.etxt{font-size:13px;color:#aaa}
+.rcard{background:var(--dark);border-radius:var(--radius);padding:16px;margin-bottom:13px;color:#fff}
+.rtitle{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--gold-light);margin-bottom:11px}
+.rrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px}
+.rrow:last-child{border-bottom:none}
+.rrow .rl{color:#aaa}.rrow .rv{font-weight:600;color:#fff}
+.rrow.tot .rl{color:var(--gold-light);font-size:13px;font-weight:700}.rrow.tot .rv{color:var(--gold-light);font-size:17px;font-family:'Playfair Display',serif;font-weight:900}
+.rrow.pro .rl{color:#6ECF8A;font-size:13px;font-weight:700}.rrow.pro .rv{color:#6ECF8A;font-size:17px;font-family:'Playfair Display',serif;font-weight:900}
+.rrow.los .rl{color:#F1948A;font-size:13px;font-weight:700}.rrow.los .rv{color:#F1948A;font-size:17px;font-family:'Playfair Display',serif;font-weight:900}
+.set-section{margin-bottom:20px}
+.set-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:9px;color:var(--dark)}
+.set-row{background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:11px 13px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:9px}
+.set-row label{font-size:13px;font-weight:500;color:var(--dark)}
+.set-row input{border:1.5px solid var(--border);border-radius:10px;padding:7px 9px;font-size:13px;font-family:'DM Sans',sans-serif;background:#fff;color:var(--dark);width:90px;text-align:right}
+.set-row input:focus{outline:none;border-color:var(--gold)}
+.bm-list{display:flex;flex-direction:column;gap:6px;margin-bottom:7px}
+.bm-row{background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);padding:8px 11px;display:flex;align-items:center;gap:7px}
+.bm-row input{flex:1;border:1.5px solid var(--border);border-radius:10px;padding:7px 10px;font-size:13px;font-family:'DM Sans',sans-serif;background:#fff;color:var(--dark)}
+.bm-row input:focus{outline:none;border-color:var(--gold)}
+.bm-del{background:none;border:1.5px solid #eee;border-radius:10px;width:32px;height:32px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#ccc;transition:all .2s}
+.bm-del:active{background:var(--red);border-color:var(--red);color:#fff}
+.add-bm-btn{width:100%;padding:11px;background:#fff;color:var(--dark);border:2px dashed var(--border);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;margin-bottom:6px}
+.add-bm-btn:active{border-color:var(--gold);color:var(--gold)}
+.save-btn{width:100%;padding:14px;background:var(--gold);color:#fff;border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;margin-top:6px}
+.save-btn:active{background:var(--brown)}
+.row-between{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.clear-btn{background:none;border:1.5px solid var(--red);color:var(--red);border-radius:50px;padding:6px 13px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.clear-btn:active{background:var(--red);color:#fff}
+.hg-title{font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin:13px 0 6px}
+.toast{position:fixed;bottom:72px;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--gold-light);padding:10px 20px;border-radius:50px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.hint-box{background:#FFF8E8;border:1.5px dashed var(--gold);border-radius:var(--radius);padding:13px;text-align:center;font-size:12px;color:var(--brown);margin-bottom:12px}
+.bottom-safe{height:16px}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splashScreen" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1A1208;z-index:99998;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="text-align:center;padding:30px">
+    <div style="font-size:64px;margin-bottom:16px">✂️</div>
+    <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;color:#E8B84B;margin-bottom:6px">Berber</div>
+    <div style="font-size:12px;color:#888;letter-spacing:3px;text-transform:uppercase;margin-bottom:8px">Yönetim Sistemi</div>
+    <div style="width:60px;height:2px;background:linear-gradient(90deg,transparent,#C8952A,transparent);margin:0 auto 20px;"></div>
+    <div style="font-size:12px;color:#555;letter-spacing:1px;margin-bottom:6px">Hazırlayan</div>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#C8952A;">Recep Çetin</div>
+  </div>
+</div>
+
+<div class="header">
+  <div class="hlogo">
+    <span style="font-size:23px">✂️</span>
+    <div class="htitle" id="htitle">Berber<span id="shopSub">YÖNETİM</span></div>
+  </div>
+  <div class="hdate" id="hdate"></div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showPage('islem')"><span class="ni">✂️</span>İşlem</button>
+  <button class="nav-btn" onclick="showPage('bugun')"><span class="ni">📋</span>Bugün</button>
+  <button class="nav-btn" onclick="showPage('ozet')"><span class="ni">📊</span>Gün Sonu</button>
+  <button class="nav-btn" onclick="showPage('gecmis')"><span class="ni">🗓️</span>Geçmiş</button>
+  <button class="nav-btn" onclick="showPage('aylik')"><span class="ni">📅</span>Aylık</button>
+  <button class="nav-btn" onclick="showPage('randevu')"><span class="ni">📆</span>Randevu</button>
+  <button class="nav-btn" onclick="showPage('ayarlar')"><span class="ni">⚙️</span>Ayarlar</button>
+</div>
+
+<!-- İŞLEM EKLE -->
+<div class="page active" id="page-islem">
+  <p class="stitle">İşlem Ekle</p>
+  <p class="ssub">Berber seçin → Müşteri adını yazın → Hizmet seçin → Kaydedin</p>
+  <div class="btabs" id="barberTabs"></div>
+  <div class="customer-row">
+    <span style="font-size:19px">👤</span>
+    <input type="text" id="customerName" placeholder="Müşteri adı (opsiyonel)" autocomplete="off">
+  </div>
+  <div id="menuArea"></div>
+  <button class="add-btn" id="addBtn" onclick="addEntry()" disabled>Kaydet</button>
+  <div class="bottom-safe"></div>
+</div>
+
+<!-- BUGÜN -->
+<div class="page" id="page-bugun">
+  <div class="row-between" style="margin-top:6px">
+    <div><p class="stitle">Bugünkü İşlemler</p><p class="ssub" id="todaySub">Yükleniyor...</p></div>
+    <button class="clear-btn" onclick="clearToday()">Temizle</button>
+  </div>
+  <div id="todayList"></div>
+  <div class="bottom-safe"></div>
+</div>
+
+<!-- GÜN SONU -->
+<div class="page" id="page-ozet">
+  <p class="stitle">Gün Sonu Raporu</p>
+  <p class="ssub">Bugünün tam özeti, berber performansı ve kar/zarar</p>
+  <div id="summaryContent"></div>
+  <div class="bottom-safe"></div>
+</div>
+
+<!-- GEÇMİŞ -->
+<div class="page" id="page-gecmis">
+  <p class="stitle">Geçmiş Günler</p>
+  <p class="ssub">Tarihe göre filtrelenmiş detaylı görünüm</p>
+  <div class="datebar" id="dateBar"></div>
+  <div id="historyContent"></div>
+  <div class="bottom-safe"></div>
+</div>
+
+<!-- AYLIK -->
+<div class="page" id="page-aylik">
+  <p class="stitle">Aylık Rapor</p>
+  <p class="ssub">Ay bazında ciro, performans ve net kar/zarar</p>
+  <div class="msel" id="monthSel"></div>
+  <div id="monthContent"></div>
+  <div class="bottom-safe"></div>
+</div>
+
+<!-- RANDEVU -->
+<div class="page" id="page-randevu">
+  <p class="stitle">Randevular</p>
+  <p class="ssub">Randevu ekle — saat gelince sesli uyarı çıkar</p>
+
+  <div style="background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;border-left:3px solid var(--gold);padding-left:9px">➕ Yeni Randevu</div>
+
+    <div style="margin-bottom:10px">
+      <div style="font-size:12px;color:#888;margin-bottom:5px">👤 Müşteri Adı</div>
+      <input type="text" id="r-musteri" placeholder="Müşteri adını yazın" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:10px 13px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--dark);background:#FFFDF8">
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="font-size:12px;color:#888;margin-bottom:5px">✂️ Berber</div>
+      <div id="r-berberTabs" style="display:flex;gap:7px;flex-wrap:wrap"></div>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="font-size:12px;color:#888;margin-bottom:5px">🕐 Tarih ve Saat</div>
+      <div style="display:flex;gap:8px">
+        <input type="date" id="r-tarih" style="flex:1;border:1.5px solid var(--border);border-radius:12px;padding:10px 11px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--dark);background:#FFFDF8">
+        <input type="time" id="r-saat" style="width:110px;border:1.5px solid var(--border);border-radius:12px;padding:10px 11px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--dark);background:#FFFDF8">
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;color:#888;margin-bottom:5px">💬 Not (opsiyonel)</div>
+      <input type="text" id="r-not" placeholder="Örn: Saç + Sakal" style="width:100%;border:1.5px solid var(--border);border-radius:12px;padding:10px 13px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--dark);background:#FFFDF8">
+    </div>
+
+    <button onclick="addRandevu()" style="width:100%;padding:13px;background:var(--dark);color:var(--gold-light);border:none;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer">
+      📆 Randevu Ekle
+    </button>
+  </div>
+
+  <div id="randevuList"></div>
+  <div class="bottom-safe"></div>
+</div>
+
+<!-- AYARLAR -->
+<div class="page" id="page-ayarlar">
+  <p class="stitle">Ayarlar</p>
+  <p class="ssub">Dükkan adı, berberler, giderler ve fiyatlar</p>
+
+  <div class="set-section">
+    <p class="set-title">🏪 Dükkan Adı</p>
+    <div class="set-row"><label>Dükkan adı</label><input type="text" id="set-shopname" placeholder="Berber adı" style="width:155px;text-align:left"></div>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">👤 Berberler</p>
+    <div class="bm-list" id="bmList"></div>
+    <button class="add-bm-btn" onclick="addBarberField()">➕ Yeni Berber Ekle</button>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">💰 Sabit Aylık Giderler (₺)</p>
+    <p style="font-size:11px;color:#999;margin-bottom:10px">Gün sonu ve aylık kar/zarar hesabı için gerekli</p>
+    <div class="set-row"><label>Kira</label><input type="number" id="g-kira" placeholder="0"></div>
+    <div class="set-row"><label>Elektrik / Su</label><input type="number" id="g-elektrik" placeholder="0"></div>
+    <div class="set-row"><label>Malzeme / Sarf</label><input type="number" id="g-malzeme" placeholder="0"></div>
+    <div class="set-row"><label>Personel Maaşı</label><input type="number" id="g-maas" placeholder="0"></div>
+    <div class="set-row"><label>Diğer Gider</label><input type="number" id="g-diger" placeholder="0"></div>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">💈 Saç Hizmetleri (₺)</p>
+    <div class="set-row"><label>Saç Kesimi</label><input type="number" id="p-sac1"></div>
+    <div class="set-row"><label>Saç + Şekil</label><input type="number" id="p-sac2"></div>
+    <div class="set-row"><label>Çocuk Kesimi</label><input type="number" id="p-sac3"></div>
+    <div class="set-row"><label>Fade / Skin Fade</label><input type="number" id="p-sac4"></div>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">🧔 Sakal Hizmetleri (₺)</p>
+    <div class="set-row"><label>Sakal Düzeltme</label><input type="number" id="p-sakal1"></div>
+    <div class="set-row"><label>Ustura Tıraşı</label><input type="number" id="p-sakal2"></div>
+    <div class="set-row"><label>Sakal Şekil</label><input type="number" id="p-sakal3"></div>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">🎨 Saç Boyama (₺)</p>
+    <div class="set-row"><label>Tek Renk Boya</label><input type="number" id="p-boya1"></div>
+    <div class="set-row"><label>Röfle / Balayage</label><input type="number" id="p-boya2"></div>
+    <div class="set-row"><label>Ombre</label><input type="number" id="p-boya3"></div>
+    <div class="set-row"><label>Saç Bakım Maskesi</label><input type="number" id="p-boya4"></div>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">🚿 Yıkama & Fön (₺)</p>
+    <div class="set-row"><label>Saç Yıkama</label><input type="number" id="p-yikama1"></div>
+    <div class="set-row"><label>Yıkama + Fön</label><input type="number" id="p-yikama2"></div>
+    <div class="set-row"><label>Yıkama + Bakım</label><input type="number" id="p-yikama3"></div>
+    <div class="set-row"><label>Fön Çekme</label><input type="number" id="p-yikama4"></div>
+  </div>
+
+  <div class="set-section">
+    <p class="set-title">⭐ Kombo & Diğer (₺)</p>
+    <div class="set-row"><label>Saç + Sakal Kombo</label><input type="number" id="p-kombo1"></div>
+    <div class="set-row"><label>Kaş Düzeltme</label><input type="number" id="p-diger1"></div>
+    <div class="set-row"><label>Bıyık Düzeltme</label><input type="number" id="p-diger2"></div>
+    <div class="set-row"><label>Yüz Maskesi</label><input type="number" id="p-diger3"></div>
+  </div>
+
+  <button class="save-btn" onclick="saveSettings()">💾 Kaydet</button>
+  <div class="bottom-safe"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const BE = ['🧔','👨','👤','✂️','💈','🪒','👦','🧑'];
+const MONTHS_TR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const MONTHS_S = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const DAYS_TR = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const CAT_LABELS = {sac:'💇 Saç',sakal:'🧔 Sakal',boya:'🎨 Boyama',yikama:'🚿 Yıkama & Fön',kombo:'⭐ Kombo',diger:'🔧 Diğer'};
+
+let S = {
+  shopName:'Berber Yönetim',
+  barbers:['Ahmet','Mehmet','Mahmut'],
+  selectedBarber:0,
+  sel:{},
+  expenses:{kira:0,elektrik:0,malzeme:0,maas:0,diger:0},
+  services:{
+    sac:[
+      {id:'sac1',name:'Saç Kesimi',price:150,icon:'💇',cat:'sac'},
+      {id:'sac2',name:'Saç + Şekil',price:200,icon:'✂️',cat:'sac'},
+      {id:'sac3',name:'Çocuk Kesimi',price:100,icon:'👦',cat:'sac'},
+      {id:'sac4',name:'Fade / Skin',price:200,icon:'⚡',cat:'sac'},
+    ],
+    sakal:[
+      {id:'sakal1',name:'Sakal Düzeltme',price:100,icon:'🧔',cat:'sakal'},
+      {id:'sakal2',name:'Ustura Tıraş',price:120,icon:'🪒',cat:'sakal'},
+      {id:'sakal3',name:'Sakal Şekil',price:130,icon:'💈',cat:'sakal'},
+    ],
+    boya:[
+      {id:'boya1',name:'Tek Renk Boya',price:400,icon:'🎨',cat:'boya'},
+      {id:'boya2',name:'Röfle / Balayage',price:600,icon:'✨',cat:'boya'},
+      {id:'boya3',name:'Ombre',price:700,icon:'🌈',cat:'boya'},
+      {id:'boya4',name:'Saç Bakım',price:200,icon:'💆',cat:'boya'},
+    ],
+    yikama:[
+      {id:'yikama1',name:'Saç Yıkama',price:80,icon:'🚿',cat:'yikama'},
+      {id:'yikama2',name:'Yıkama + Fön',price:130,icon:'💨',cat:'yikama'},
+      {id:'yikama3',name:'Saç Yıkama + Bakım',price:180,icon:'🧴',cat:'yikama'},
+      {id:'yikama4',name:'Fön Çekme',price:80,icon:'🌬️',cat:'yikama'},
+    ],
+    kombo:[
+      {id:'kombo1',name:'Saç + Sakal',price:230,icon:'⭐',cat:'kombo'},
+    ],
+    diger:[
+      {id:'diger1',name:'Kaş Düzeltme',price:60,icon:'🔪',cat:'diger'},
+      {id:'diger2',name:'Bıyık Düzeltme',price:50,icon:'👨',cat:'diger'},
+      {id:'diger3',name:'Yüz Maskesi',price:80,icon:'🫧',cat:'diger'},
+    ],
+  },
+  entries:[],
+  randevular:[],
+};
+
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('berber_v3')||'{}');
+    if(d.shopName) S.shopName=d.shopName;
+    if(d.barbers) S.barbers=d.barbers;
+    if(d.entries) S.entries=d.entries;
+    if(d.expenses) S.expenses={...S.expenses,...d.expenses};
+    if(d.randevular) S.randevular=d.randevular;
+    // Fiyatları yükle
+    if(d.prices) Object.keys(S.services).forEach(c=>S.services[c].forEach(sv=>{
+      if(d.prices[sv.id] !== undefined) sv.price = d.prices[sv.id];
+    }));
+    // Eski format uyumluluğu
+    else if(d.services) Object.keys(S.services).forEach(c=>S.services[c].forEach(sv=>{
+      const ds=d.services[c]?.find(x=>x.id===sv.id);
+      if(ds) sv.price=ds.price;
+    }));
+  }catch(e){}
+}
+
+function save(){
+  try{// Sadece fiyatları kaydet - tüm service objesini değil
+    const prices = {};
+    Object.keys(S.services).forEach(cat=>{
+      S.services[cat].forEach(sv=>{ prices[sv.id] = sv.price; });
+    });
+    localStorage.setItem('berber_v3',JSON.stringify({
+      shopName:S.shopName,
+      barbers:S.barbers,
+      entries:S.entries,
+      expenses:S.expenses,
+      prices:prices,
+      randevular:S.randevular||[]
+    }));}catch(e){}
+}
+
+function allSvcs(){return Object.values(S.services).flat();}
+function dateStr(d){
+  return d.getFullYear()+'-'+n2(d.getMonth()+1)+'-'+n2(d.getDate());
+}
+
+function monthStr(d){return `${d.getFullYear()}-${n2(d.getMonth()+1)}`;}
+function n2(n){return String(n).padStart(2,'0');}
+function totalExp(){return Object.values(S.expenses).reduce((s,v)=>s+(parseInt(v)||0),0);}
+
+// INIT
+load();
+initHeader();
+
+// SPLASH
+function hideSplash(){
+  const sp=document.getElementById('splashScreen');
+  if(!sp) return;
+  sp.style.transition='opacity 0.8s ease';
+  sp.style.opacity='0';
+  setTimeout(()=>{ if(sp.parentNode) sp.parentNode.removeChild(sp); },900);
+}
+setTimeout(hideSplash, 2200);
+// Güvenlik: dokunuşta da kapansın
+document.addEventListener('touchstart', function(){setTimeout(hideSplash,100);}, {once:true});
+
+renderBarberTabs();
+renderMenu();
+
+function initHeader(){
+  const ht=document.getElementById('htitle');
+  ht.childNodes[0].textContent=S.shopName;
+  document.getElementById('shopSub').textContent=S.shopName.toUpperCase();
+  const n=new Date();
+  document.getElementById('hdate').innerHTML=`<strong>${n.getDate()} ${MONTHS_S[n.getMonth()]} ${n.getFullYear()}</strong>${DAYS_TR[n.getDay()]}`;
+}
+
+// PAGE NAV
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  ['islem','bugun','ozet','gecmis','aylik','randevu','ayarlar'].forEach((p,i)=>{
+    if(p===id) document.querySelectorAll('.nav-btn')[i]?.classList.add('active');
+  });
+  if(id==='bugun') renderToday();
+  if(id==='ozet') renderSummary();
+  if(id==='gecmis') renderHistory();
+  if(id==='aylik') renderMonthly();
+  if(id==='ayarlar') loadSettingsForm();
+}
+
+// BARBER TABS
+function renderBarberTabs(){
+  document.getElementById('barberTabs').innerHTML=
+    S.barbers.map((b,i)=>`<button class="btab ${i===S.selectedBarber?'active':''}" onclick="selBarber(${i})">${BE[i]||'✂️'} ${b}</button>`).join('');
+}
+function selBarber(i){S.selectedBarber=i;renderBarberTabs();}
+
+// MENU
+function renderMenu(){
+  let h='';
+  Object.keys(S.services).forEach(cat=>{
+    h+=`<div class="menu-group"><div class="mgtitle">${CAT_LABELS[cat]}</div><div class="sgrid">`;
+    S.services[cat].forEach(sv=>{
+      const q=S.sel[sv.id]||0,s=q>0;
+      h+=`<div class="scard ${s?'sel':''}" onclick="togSvc('${sv.id}')">
+        <div class="sc">${q}</div>
+        <div class="si">${sv.icon}</div>
+        <div class="sn">${sv.name}</div>
+        <div class="sp">${sv.price}₺</div>
+        ${s?`<div class="qty-row">
+          <button class="qbtn" onclick="event.stopPropagation();chQ('${sv.id}',-1)">−</button>
+          <span class="qnum">${q}</span>
+          <button class="qbtn" onclick="event.stopPropagation();chQ('${sv.id}',1)">+</button>
+        </div>`:''}
+      </div>`;
+    });
+    h+=`</div></div>`;
+  });
+  document.getElementById('menuArea').innerHTML=h;
+  updBtn();
+}
+
+function togSvc(id){
+  if(!S.sel[id]) S.sel[id]=1; else delete S.sel[id];
+  renderMenu();
+}
+function chQ(id,d){
+  const n=(S.sel[id]||0)+d;
+  if(n<=0) delete S.sel[id]; else S.sel[id]=n;
+  renderMenu();
+}
+function selTotal(){
+  let t=0;
+  allSvcs().forEach(sv=>{if(S.sel[sv.id]) t+=sv.price*S.sel[sv.id];});
+  return t;
+}
+function updBtn(){
+  const btn=document.getElementById('addBtn');
+  const c=Object.keys(S.sel).length;
+  btn.disabled=c===0;
+  btn.textContent=c>0?`✅ Kaydet — ${S.barbers[S.selectedBarber]} / ${selTotal()}₺`:'Kaydet';
+}
+
+// ADD ENTRY
+function addEntry(){
+  const now=new Date();
+  const cust=document.getElementById('customerName').value.trim()||'Misafir';
+  allSvcs().forEach(sv=>{
+    const q=S.sel[sv.id];
+    if(!q) return;
+    S.entries.push({
+      id:Date.now()+Math.random(),
+      barberIdx:S.selectedBarber,
+      customer:cust,
+      serviceId:sv.id,
+      serviceName:sv.name,
+      serviceCat:sv.cat,
+      qty:q,
+      price:sv.price,
+      total:sv.price*q,
+      time:now.toTimeString().slice(0,5),
+      date:dateStr(now),
+      month:monthStr(now),
+    });
+  });
+  S.sel={};
+  document.getElementById('customerName').value='';
+  save();
+  renderMenu();
+  showToast(`✅ ${cust} — Kaydedildi!`);
+  if(window._recebTetikle) window._recebTetikle(0.15);
+}
+
+// ENTRY CARD
+function eCard(e,del=true){
+  const bc={sac:'b-sac',sakal:'b-sakal',boya:'b-boya',yikama:'b-yikama',kombo:'b-kombo',diger:'b-diger'}[e.serviceCat]||'';
+  return `<div class="ecard">
+    <div class="eleft">
+      <div class="ebarber">${S.barbers[e.barberIdx]||'?'} <span class="badge ${bc}">${e.serviceCat}</span></div>
+      <div class="ecustomer">👤 ${e.customer}</div>
+      <div class="eservice">${e.serviceName}${e.qty>1?` × ${e.qty}`:''}</div>
+    </div>
+    <span class="etime">${e.time}</span>
+    <span class="eprice">${e.total}₺</span>
+    ${del?`<button class="edel" onclick="delEntry('${e.id}')">🗑</button>`:''}
+  </div>`;
+}
+
+function delEntry(id){
+  S.entries=S.entries.filter(e=>String(e.id)!==String(id));
+  save();renderToday();
+}
+
+// TODAY
+function renderToday(){
+  const today=dateStr(new Date());
+  const ens=S.entries.filter(e=>e.date===today);
+  const tot=ens.reduce((s,e)=>s+e.total,0);
+  document.getElementById('todaySub').textContent=
+    ens.length?`${ens.length} işlem • Toplam: ${tot}₺`:'Bugün henüz işlem yok';
+  document.getElementById('todayList').innerHTML=ens.length
+    ?`<div class="elist">${[...ens].reverse().map(e=>eCard(e)).join('')}</div>`
+    :`<div class="empty"><div class="eico">✂️</div><div class="etxt">Henüz işlem eklenmedi</div></div>`;
+}
+
+function clearToday(){
+  if(!confirm('Bugünkü tüm işlemleri silmek istediğinizden emin misiniz?')) return;
+  S.entries=S.entries.filter(e=>e.date!==dateStr(new Date()));
+  save();renderToday();
+}
+
+// SUMMARY
+function renderSummary(){
+  if(window._recebTetikle) window._recebTetikle(0.25);
+  const today=dateStr(new Date());
+  const ens=S.entries.filter(e=>e.date===today);
+  const ciro=ens.reduce((s,e)=>s+e.total,0);
+  const cnt=ens.length;
+  const ayGider=totalExp();
+  const gunGider=Math.round(ayGider/26);
+
+  let h=`<div class="sgrid2">
+    <div class="scard2 full gbg">
+      <div class="sicon">💰</div><div class="slabel">Günlük Toplam Ciro</div>
+      <div class="sval green">${ciro.toLocaleString('tr-TR')}₺</div>
+    </div>
+    <div class="scard2">
+      <div class="sicon">✂️</div><div class="slabel">Toplam İşlem</div><div class="sval">${cnt}</div>
+    </div>
+    <div class="scard2">
+      <div class="sicon">📈</div><div class="slabel">Ort. Bilet</div>
+      <div class="sval gold">${cnt?Math.round(ciro/cnt):0}₺</div>
+    </div>
+  </div>`;
+
+  h+=`<div style="margin-bottom:13px">`;
+  S.barbers.forEach((nm,i)=>{
+    const be=ens.filter(e=>e.barberIdx===i);
+    const bt=be.reduce((s,e)=>s+e.total,0);
+    h+=`<div class="brow">
+      <div class="bavatar">${BE[i]||'✂️'}</div>
+      <div class="binfo"><div class="bname">${nm}</div><div class="bsub">${be.length} işlem</div></div>
+      <div class="btotal">${bt}₺</div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="sgrid2">`;
+  Object.entries(CAT_LABELS).forEach(([cat,lbl])=>{
+    const ct=ens.filter(e=>e.serviceCat===cat).reduce((s,e)=>s+e.total,0);
+    h+=`<div class="scard2"><div class="slabel">${lbl}</div><div class="sval" style="font-size:17px">${ct}₺</div></div>`;
+  });
+  h+=`</div>`;
+
+  if(ayGider>0){
+    const kar=ciro-gunGider;
+    const cls=kar>=0?'pro':'los';
+    const lbl=kar>=0?'✅ Günlük Net Kar':'❌ Günlük Zarar';
+    h+=`<div class="rcard">
+      <div class="rtitle">📊 Gün Sonu Kar / Zarar</div>
+      <div class="rrow"><span class="rl">Günlük Ciro</span><span class="rv">${ciro.toLocaleString('tr-TR')}₺</span></div>
+      <div class="rrow"><span class="rl">Günlük Gider Payı (aylık÷26)</span><span class="rv" style="color:#F1948A">−${gunGider.toLocaleString('tr-TR')}₺</span></div>
+      <div class="rrow ${cls}"><span class="rl">${lbl}</span><span class="rv">${Math.abs(kar).toLocaleString('tr-TR')}₺</span></div>
+    </div>`;
+  } else {
+    h+=`<div class="hint-box">⚙️ Kar/Zarar hesabı için <strong>Ayarlar → Sabit Giderler</strong> bölümünü doldurun</div>`;
+  }
+  document.getElementById('summaryContent').innerHTML=h;
+}
+
+
+
+// HISTORY
+let selHDate=null;
+function renderHistory(){
+  const dates=[...new Set(S.entries.map(e=>e.date))].sort().reverse();
+  const today=dateStr(new Date());
+  if(!selHDate||!dates.includes(selHDate)) selHDate=dates[0]||today;
+
+  document.getElementById('dateBar').innerHTML=dates.map(d=>{
+    const p=d.split('-');
+    const lbl=d===today?'Bugün':`${parseInt(p[2])} ${MONTHS_S[parseInt(p[1])-1]}`;
+    return `<div class="dchip ${d===selHDate?'active':''}" onclick="selHD('${d}')">${lbl}</div>`;
+  }).join('');
+
+  const ens=S.entries.filter(e=>e.date===selHDate);
+  const tot=ens.reduce((s,e)=>s+e.total,0);
+  if(!ens.length){
+    document.getElementById('historyContent').innerHTML=`<div class="empty"><div class="eico">🗓️</div><div class="etxt">Bu tarihte kayıt yok</div></div>`;
+    return;
+  }
+  let h='';
+  S.barbers.forEach((nm,i)=>{
+    const be=ens.filter(e=>e.barberIdx===i).reverse();
+    if(!be.length) return;
+    const bt=be.reduce((s,e)=>s+e.total,0);
+    h+=`<div class="hg-title">✂️ ${nm} — ${bt}₺</div><div class="elist">${be.map(e=>eCard(e,false)).join('')}</div>`;
+  });
+  h+=`<div class="scard2 full gbg" style="margin-top:11px;text-align:center">
+    <div class="slabel">Bu Günün Toplam Cirosu</div>
+    <div class="sval green">${tot.toLocaleString('tr-TR')}₺</div>
+  </div>`;
+  document.getElementById('historyContent').innerHTML=h;
+}
+function selHD(d){selHDate=d;renderHistory();}
+
+// MONTHLY
+let selMon=null;
+function renderMonthly(){
+  const allMonths=[...new Set(S.entries.map(e=>e.month||e.date.slice(0,7)))].sort().reverse();
+  const thisM=monthStr(new Date());
+  if(!selMon||!allMonths.includes(selMon)) selMon=allMonths[0]||thisM;
+
+  document.getElementById('monthSel').innerHTML=allMonths.map(m=>{
+    const p=m.split('-');
+    const lbl=`${MONTHS_TR[parseInt(p[1])-1]} ${p[0]}`;
+    return `<div class="mchip ${m===selMon?'active':''}" onclick="selM('${m}')">${lbl}</div>`;
+  }).join('');
+
+  const ens=S.entries.filter(e=>(e.month||e.date.slice(0,7))===selMon);
+  const ciro=ens.reduce((s,e)=>s+e.total,0);
+  const cnt=ens.length;
+  const ayGider=totalExp();
+  const kar=ciro-ayGider;
+  const p=selMon.split('-');
+  const mLbl=`${MONTHS_TR[parseInt(p[1])-1]} ${p[0]}`;
+
+  if(!ens.length){
+    document.getElementById('monthContent').innerHTML=`<div class="empty"><div class="eico">📅</div><div class="etxt">Bu ayda kayıt yok</div></div>`;
+    return;
+  }
+
+  let h=`<div class="sgrid2">
+    <div class="scard2 full gbg">
+      <div class="sicon">💰</div><div class="slabel">Aylık Toplam Ciro</div>
+      <div class="sval green">${ciro.toLocaleString('tr-TR')}₺</div>
+    </div>
+    <div class="scard2">
+      <div class="sicon">✂️</div><div class="slabel">Toplam İşlem</div><div class="sval">${cnt}</div>
+    </div>
+    <div class="scard2">
+      <div class="sicon">📈</div><div class="slabel">Ort. Günlük</div>
+      <div class="sval gold">${Math.round(ciro/26).toLocaleString('tr-TR')}₺</div>
+    </div>
+  </div>`;
+
+  h+=`<div style="margin-bottom:13px">`;
+  S.barbers.forEach((nm,i)=>{
+    const be=ens.filter(e=>e.barberIdx===i);
+    const bt=be.reduce((s,e)=>s+e.total,0);
+    if(!be.length) return;
+    h+=`<div class="brow">
+      <div class="bavatar">${BE[i]||'✂️'}</div>
+      <div class="binfo"><div class="bname">${nm}</div><div class="bsub">${be.length} işlem</div></div>
+      <div class="btotal">${bt}₺</div>
+    </div>`;
+  });
+  h+=`</div>`;
+
+  h+=`<div class="sgrid2">`;
+  Object.entries(CAT_LABELS).forEach(([cat,lbl])=>{
+    const ct=ens.filter(e=>e.serviceCat===cat).reduce((s,e)=>s+e.total,0);
+    if(!ct) return;
+    h+=`<div class="scard2"><div class="slabel">${lbl}</div><div class="sval" style="font-size:17px">${ct}₺</div></div>`;
+  });
+  h+=`</div>`;
+
+  const cls=kar>=0?'pro':'los';
+  const kLbl=kar>=0?'✅ Aylık Net Kar':'❌ Aylık Zarar';
+  h+=`<div class="rcard">
+    <div class="rtitle">📊 ${mLbl} — Kar / Zarar</div>
+    <div class="rrow"><span class="rl">Toplam Ciro</span><span class="rv">${ciro.toLocaleString('tr-TR')}₺</span></div>`;
+  if(ayGider>0){
+    const exp=S.expenses;
+    if(exp.kira) h+=`<div class="rrow"><span class="rl">Kira</span><span class="rv" style="color:#F1948A">−${parseInt(exp.kira).toLocaleString('tr-TR')}₺</span></div>`;
+    if(exp.elektrik) h+=`<div class="rrow"><span class="rl">Elektrik / Su</span><span class="rv" style="color:#F1948A">−${parseInt(exp.elektrik).toLocaleString('tr-TR')}₺</span></div>`;
+    if(exp.malzeme) h+=`<div class="rrow"><span class="rl">Malzeme</span><span class="rv" style="color:#F1948A">−${parseInt(exp.malzeme).toLocaleString('tr-TR')}₺</span></div>`;
+    if(exp.maas) h+=`<div class="rrow"><span class="rl">Personel Maaşı</span><span class="rv" style="color:#F1948A">−${parseInt(exp.maas).toLocaleString('tr-TR')}₺</span></div>`;
+    if(exp.diger) h+=`<div class="rrow"><span class="rl">Diğer Gider</span><span class="rv" style="color:#F1948A">−${parseInt(exp.diger).toLocaleString('tr-TR')}₺</span></div>`;
+    h+=`<div class="rrow tot"><span class="rl">Toplam Gider</span><span class="rv">−${ayGider.toLocaleString('tr-TR')}₺</span></div>`;
+    h+=`<div class="rrow ${cls}"><span class="rl">${kLbl}</span><span class="rv">${Math.abs(kar).toLocaleString('tr-TR')}₺</span></div>`;
+  } else {
+    h+=`<div class="rrow"><span class="rl" style="color:#aaa">⚙️ Gider girilmemiş</span><span class="rv" style="color:#aaa">Ayarlar'dan ekleyin</span></div>`;
+  }
+  h+=`</div>`;
+  document.getElementById('monthContent').innerHTML=h;
+}
+function selM(m){selMon=m;renderMonthly();}
+
+// SETTINGS
+function loadSettingsForm(){
+  document.getElementById('set-shopname').value=S.shopName;
+  renderBmList();
+  ['kira','elektrik','malzeme','maas','diger'].forEach(k=>{
+    const el=document.getElementById('g-'+k);
+    if(el) el.value=S.expenses[k]||'';
+  });
+  allSvcs().forEach(sv=>{
+    const el=document.getElementById('p-'+sv.id);
+    if(el) el.value=sv.price;
+  });
+}
+
+function renderBmList(){
+  document.getElementById('bmList').innerHTML=S.barbers.map((b,i)=>
+    `<div class="bm-row">
+      <span style="font-size:17px">${BE[i]||'✂️'}</span>
+      <input type="text" id="bm-${i}" value="${b}" placeholder="Berber adı">
+      <button class="bm-del" onclick="rmBarber(${i})">🗑</button>
+    </div>`
+  ).join('');
+}
+
+function saveBmInputs(){
+  S.barbers.forEach((_,i)=>{
+    const el=document.getElementById(`bm-${i}`);
+    if(el&&el.value.trim()) S.barbers[i]=el.value.trim();
+  });
+}
+
+function addBarberField(){
+  if(S.barbers.length>=8){showToast('⚠️ En fazla 8 berber');return;}
+  saveBmInputs();
+  S.barbers.push('Yeni Berber');
+  renderBmList();
+}
+
+function rmBarber(i){
+  if(S.barbers.length<=1){showToast('⚠️ En az 1 berber olmalı');return;}
+  if(!confirm(`"${S.barbers[i]}" silinsin mi?`)) return;
+  S.barbers.splice(i,1);
+  if(S.selectedBarber>=S.barbers.length) S.selectedBarber=0;
+  save();renderBmList();renderBarberTabs();
+  showToast('🗑 Silindi');
+}
+
+function saveSettings(){
+  const sn=document.getElementById('set-shopname').value.trim();
+  if(sn) S.shopName=sn;
+  saveBmInputs();
+  ['kira','elektrik','malzeme','maas','diger'].forEach(k=>{
+    const el=document.getElementById('g-'+k);
+    if(el) S.expenses[k]=parseInt(el.value)||0;
+  });
+  allSvcs().forEach(sv=>{
+    const el=document.getElementById('p-'+sv.id);
+    if(el&&el.value) sv.price=parseInt(el.value)||sv.price;
+  });
+  save();
+  initHeader();renderBarberTabs();renderMenu();
+  showToast('✅ Ayarlar kaydedildi!');
+}
+
+
+// ═══════════════════════════════
+// RANDEVU SİSTEMİ
+// ═══════════════════════════════
+let selRBarber = 0;
+
+function renderRandevuBerberTabs(){
+  const el = document.getElementById('r-berberTabs');
+  if(!el) return;
+  el.innerHTML = S.barbers.map((b,i)=>
+    `<button class="btab ${i===selRBarber?'active':''}" onclick="selRBarber=${i};renderRandevuBerberTabs()" style="font-size:12px;padding:7px 13px">${BE[i]||'✂️'} ${b}</button>`
+  ).join('');
+  // Varsayılan tarih bugün
+  const td = document.getElementById('r-tarih');
+  if(td && !td.value) td.value = dateStr(new Date());
+}
+
+function addRandevu(){
+  const musteri = document.getElementById('r-musteri').value.trim();
+  const tarih = document.getElementById('r-tarih').value;
+  const saat = document.getElementById('r-saat').value;
+  const not = document.getElementById('r-not').value.trim();
+
+  if(!musteri){ showToast('⚠️ Müşteri adı gerekli'); return; }
+  if(!tarih||!saat){ showToast('⚠️ Tarih ve saat gerekli'); return; }
+
+  if(!S.randevular) S.randevular = [];
+  S.randevular.push({
+    id: Date.now() + Math.random(),
+    musteri,
+    barberIdx: selRBarber,
+    tarih,
+    saat,
+    not,
+    tamamlandi: false,
+  });
+
+  document.getElementById('r-musteri').value = '';
+  document.getElementById('r-not').value = '';
+  document.getElementById('r-saat').value = '';
+
+  save();
+  renderRandevuList();
+  showToast(`📆 ${musteri} randevusu eklendi!`);
+}
+
+function renderRandevuList(){
+  if(!S.randevular) S.randevular = [];
+  const el = document.getElementById('randevuList');
+  if(!el) return;
+
+  const bugun = dateStr(new Date());
+  const gelecek = S.randevular
+    .filter(r => !r.tamamlandi && r.tarih >= bugun)
+    .sort((a,b) => (a.tarih+a.saat).localeCompare(b.tarih+b.saat));
+  const gecmis = S.randevular
+    .filter(r => r.tamamlandi || r.tarih < bugun)
+    .sort((a,b) => (b.tarih+b.saat).localeCompare(a.tarih+a.saat))
+    .slice(0,10);
+
+  const monthsS = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+  function rCard(r, gecmismi){
+    const p = r.tarih.split('-');
+    const tarihLbl = r.tarih===bugun ? 'Bugün' : `${parseInt(p[2])} ${monthsS[parseInt(p[1])-1]}`;
+    const bColor = gecmismi ? '#aaa' : 'var(--gold)';
+    return `<div style="background:var(--card-bg);border:1.5px solid ${gecmismi?'#e0e0e0':'var(--border)'};border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;${gecmismi?'opacity:0.6':''}">
+      <div style="flex:1">
+        <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:${bColor};margin-bottom:3px">${S.barbers[r.barberIdx]||'?'} ${BE[r.barberIdx]||'✂️'}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--dark)">👤 ${r.musteri}</div>
+        ${r.not?`<div style="font-size:12px;color:#888;margin-top:1px">📝 ${r.not}</div>`:''}
+      </div>
+      <div style="text-align:right;margin-left:10px">
+        <div style="font-size:14px;font-weight:700;color:var(--dark)">${r.saat}</div>
+        <div style="font-size:11px;color:#aaa">${tarihLbl}</div>
+        ${!gecmismi?`<button onclick="silRandevu('${r.id}')" style="margin-top:5px;background:none;border:1px solid #eee;border-radius:8px;padding:3px 8px;font-size:11px;color:#ccc;cursor:pointer">🗑</button>`:''}
+      </div>
+    </div>`;
+  }
+
+  let h = '';
+  if(gelecek.length){
+    h += `<div style="font-size:11px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">📅 Yaklaşan Randevular</div>`;
+    h += gelecek.map(r=>rCard(r,false)).join('');
+  } else {
+    h += `<div class="empty"><div class="eico">📆</div><div class="etxt">Yaklaşan randevu yok</div></div>`;
+  }
+  if(gecmis.length){
+    h += `<div style="font-size:11px;font-weight:600;color:#ccc;text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px">⏪ Geçmiş</div>`;
+    h += gecmis.map(r=>rCard(r,true)).join('');
+  }
+
+  el.innerHTML = h;
+}
+
+function silRandevu(id){
+  if(!confirm('Randevu silinsin mi?')) return;
+  S.randevular = (S.randevular||[]).filter(r=>String(r.id)!==String(id));
+  save(); renderRandevuList();
+}
+
+// Randevu uyarı sistemi - her dakika kontrol
+function randevuKontrol(){
+  if(!S.randevular) return;
+  const now = new Date();
+  const bugun = dateStr(now);
+  const simdi = now.toTimeString().slice(0,5);
+
+  S.randevular.forEach(r=>{
+    if(r.tamamlandi) return;
+    if(r.tarih !== bugun) return;
+
+    const rFark = ((parseInt(r.saat.split(':')[0])*60 + parseInt(r.saat.split(':')[1])) -
+                   (now.getHours()*60 + now.getMinutes()));
+
+    // 10 dakika kala uyarı (8-10 dk arası - kaçırmasın diye tolerans)
+    if(rFark >= 8 && rFark <= 10 && !r.uyari10){
+      r.uyari10 = true; save();
+      randevuUyari(r, '10 dakika kaldı!', false);
+    }
+    // Tam saatinde sadece tamamlandı işaretle
+    if(rFark === 0 && !r.uyariTam){
+      r.uyariTam = true; r.tamamlandi = true; save();
+      renderRandevuList();
+    }
+  });
+}
+
+function randevuUyari(r, baslik, tamSaat){
+  // Overlay uyarı
+  const overlay = document.createElement('div');
+  overlay.id='randevu-uyari';
+  overlay.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.88);z-index:9990;display:flex;align-items:center;justify-content:center;';
+
+  const box = document.createElement('div');
+  box.style.cssText='background:var(--dark);border:3px solid '+(tamSaat?'var(--green)':'var(--gold)')+';border-radius:24px;padding:28px 22px;text-align:center;max-width:300px;width:88%;';
+  box.innerHTML=`
+    <div style="font-size:48px;margin-bottom:10px">${tamSaat?'⏰':'🔔'}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:${tamSaat?'#6ECF8A':'#E8B84B'};margin-bottom:6px">${baslik}</div>
+    <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">👤 ${r.musteri}</div>
+    <div style="font-size:14px;color:var(--gold-light);margin-bottom:4px">✂️ ${S.barbers[r.barberIdx]||'?'}</div>
+    <div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:4px">🕐 ${r.saat}</div>
+    ${r.not?`<div style="font-size:13px;color:#aaa;margin-bottom:4px">📝 ${r.not}</div>`:''}
+    <button onclick="document.getElementById('randevu-uyari').remove()" style="margin-top:14px;background:var(--gold);border:none;border-radius:12px;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer">Tamam ✓</button>
+  `;
+  overlay.appendChild(box);
+  document.body.appendChild(overlay);
+
+  // Sesli uyarı
+  if(window.speechSynthesis){
+    speechSynthesis.cancel();
+    const mesaj = tamSaat
+      ? `${r.musteri} adlı müşterinin ${S.barbers[r.barberIdx]||''} berbere randevusu var!`
+      : `Hatırlatma: ${r.musteri} adlı müşterinin ${S.barbers[r.barberIdx]||''} berbere 10 dakika sonra randevusu var!`;
+    const u = new SpeechSynthesisUtterance(mesaj);
+    u.lang='tr-TR'; u.rate=0.88; u.volume=1;
+    speechSynthesis.speak(u);
+    if(tamSaat){
+      u.onend=()=>{
+        setTimeout(()=>{
+          const u2=new SpeechSynthesisUtterance(mesaj);
+          u2.lang='tr-TR';u2.rate=0.88;u2.volume=1;
+          speechSynthesis.speak(u2);
+        },800);
+      };
+    }
+  }
+}
+
+// showPage'e randevu sayfası için handler ekle
+const _origShowPage = showPage;
+showPage = function(id){
+  _origShowPage(id);
+  if(id==='randevu'){ renderRandevuBerberTabs(); renderRandevuList(); }
+};
+
+// Her 30 saniyede randevu kontrol
+setInterval(randevuKontrol, 30000);
+randevuKontrol();
+
+// Sekme tekrar aktif olunca hemen kontrol et
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible') randevuKontrol();
+});
+
+// State'e randevular alanını ekle
+if(!S.randevular) S.randevular = [];
+
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// 🎭 HACKER RECEB SÜRPRİZİ
+// Haftaiçi, 11:00-19:00, her ayın rastgele 1 günü ve saatinde
+(function recebSurprizi(){
+  const HAMSTER = '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';
+
+  function getHedefZaman(){
+    const now = new Date();
+    const yil = now.getFullYear();
+    const ay = now.getMonth(); // 0-11
+    // Seed: yıl+ay bazlı deterministik rastgelelik
+    const seed = yil * 100 + ay;
+    const rnd1 = ((seed * 1337 + 17) % 1000) / 1000;
+    const rnd2 = ((seed * 9871 + 53) % 1000) / 1000;
+    const rnd3 = ((seed * 4567 + 89) % 1000) / 1000;
+
+    // O ayın kaç günü var
+    const ayGunSayisi = new Date(yil, ay+1, 0).getDate();
+
+    // Haftaiçi gün bul (birkaç adaydan ilk hafta içini seç)
+    let hedefGun = null;
+    for(let offset = 0; offset < 28; offset++){
+      const aday = Math.floor(rnd1 * ayGunSayisi) + 1;
+      const shifted = ((aday + offset - 1) % ayGunSayisi) + 1;
+      const d = new Date(yil, ay, shifted);
+      if(d.getDay() >= 1 && d.getDay() <= 5){
+        hedefGun = shifted;
+        break;
+      }
+    }
+    if(!hedefGun) return null;
+
+    // 11:00 - 19:00 arası rastgele saat ve dakika
+    const hedefSaat = Math.floor(rnd2 * 8) + 11; // 11-18
+    const hedefDakika = Math.floor(rnd3 * 60);    // 0-59
+
+    return new Date(yil, ay, hedefGun, hedefSaat, hedefDakika, 0);
+  }
+
+  function goster(){
+    if(document.getElementById('receb-overlay')) return; // zaten açık
+
+    const overlay = document.createElement('div');
+    overlay.id = 'receb-overlay';
+    overlay.style.cssText = [
+      'position:fixed','top:0','left:0','width:100%','height:100%',
+      'z-index:99999','display:flex','flex-direction:column',
+      'align-items:center','justify-content:center',
+      'background:#000','overflow:hidden'
+    ].join(';');
+
+    // Hamster fotoğrafı — tam arka plan
+    const img = document.createElement('img');
+    img.src = 'data:image/jpeg;base64,' + HAMSTER;
+    img.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:0.92;';
+
+    // Karartma katmanı
+    const dark = document.createElement('div');
+    dark.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.15);';
+
+    // İçerik kutusu
+    const box = document.createElement('div');
+    box.style.cssText = [
+      'position:relative','z-index:2','text-align:center',
+      'padding:0 24px','max-width:380px','width:100%'
+    ].join(';');
+
+    // Geri sayım çemberi
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width','90');svg.setAttribute('height','90');
+    svg.style.cssText='display:block;margin:0 auto 14px;';
+    const circle_bg = document.createElementNS(svgNS,'circle');
+    circle_bg.setAttribute('cx','45');circle_bg.setAttribute('cy','45');circle_bg.setAttribute('r','40');
+    circle_bg.setAttribute('fill','none');circle_bg.setAttribute('stroke','rgba(255,255,255,0.15)');circle_bg.setAttribute('stroke-width','6');
+    const circle_fg = document.createElementNS(svgNS,'circle');
+    circle_fg.setAttribute('cx','45');circle_fg.setAttribute('cy','45');circle_fg.setAttribute('r','40');
+    circle_fg.setAttribute('fill','none');circle_fg.setAttribute('stroke','#E8B84B');circle_fg.setAttribute('stroke-width','6');
+    circle_fg.setAttribute('stroke-dasharray', String(2*Math.PI*40));
+    circle_fg.setAttribute('stroke-dashoffset','0');
+    circle_fg.setAttribute('stroke-linecap','round');
+    circle_fg.style.transform='rotate(-90deg)';circle_fg.style.transformOrigin='center';
+    circle_fg.style.transition='stroke-dashoffset 1s linear';
+    svg.appendChild(circle_bg);svg.appendChild(circle_fg);
+
+    const sayacText = document.createElementNS(svgNS,'text');
+    sayacText.setAttribute('x','45');sayacText.setAttribute('y','52');
+    sayacText.setAttribute('text-anchor','middle');
+    sayacText.setAttribute('font-size','22');sayacText.setAttribute('font-weight','bold');
+    sayacText.setAttribute('fill','#E8B84B');sayacText.setAttribute('font-family','Arial');
+    sayacText.textContent='31';
+    svg.appendChild(sayacText);
+
+    box.innerHTML = `
+      <div style="font-size:15px;font-weight:700;color:#E8B84B;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;text-shadow:0 2px 8px #000">🏆 AYLIK BÜYÜK SAYGILER 🏆</div>
+      <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:#fff;line-height:1.2;text-shadow:0 2px 12px #000,0 0 30px #000,0 0 60px #000;margin-bottom:8px">
+        SOFİ, RECEP VE<br>HÜSEYİN İKİZLERE<br>SAYGILAR
+      </div>
+      <div style="font-size:20px;font-weight:700;color:#E8B84B;text-shadow:0 2px 10px #000;margin-bottom:18px">
+        ÇOK BÜYÜK ADAMLAR 🎖️🎖️🎖️
+      </div>
+    `;
+    box.insertBefore(svg, box.firstChild);
+
+    overlay.appendChild(img);
+    overlay.appendChild(dark);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    // Ses açma girişimi (Android'de çalışır)
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if(AudioCtx){
+        const ctx = new AudioCtx();
+        // Kısa sessiz ses çal → gain node ile sesi aç
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        gain.gain.value = 0.001;
+        osc.connect(gain);gain.connect(ctx.destination);
+        osc.start();osc.stop(ctx.currentTime+0.1);
+      }
+    }catch(e){}
+
+    // TTS fonksiyonu
+    const metin = 'Sofi, Recep ve Hüseyin İkizlere saygılar! Çok büyük adamlar!';
+    let konusmaSayac = 0;
+
+    function soyle(){
+      konusmaSayac++;
+      if(!window.speechSynthesis) return;
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(metin);
+      u.lang='tr-TR'; u.rate=0.85; u.pitch=1.1; u.volume=1;
+      u.onend = ()=>{ if(konusmaSayac < 3) setTimeout(soyle, 800); };
+      speechSynthesis.speak(u);
+    }
+    soyle();
+
+    // 60 saniyelik geri sayım
+    const toplam = 31;
+    const circumference = 2 * Math.PI * 40;
+    let kalan = toplam;
+    const timer = setInterval(()=>{
+      kalan--;
+      sayacText.textContent = String(kalan);
+      const offset = circumference * (1 - kalan/toplam);
+      circle_fg.setAttribute('stroke-dashoffset', String(offset));
+      if(kalan <= 0){
+        clearInterval(timer);
+        if(window.speechSynthesis) speechSynthesis.cancel();
+        overlay.style.transition = 'opacity 1.5s';
+        overlay.style.opacity = '0';
+        setTimeout(()=>overlay.remove(), 1500);
+      }
+    },1000);
+  }
+
+  // Ses unlock - kullanıcı ilk dokunuşta AudioContext aç
+  let audioUnlocked = false;
+  let pendingAudio = null;
+  document.addEventListener('touchstart', function unlockAudio(){
+    if(audioUnlocked) return;
+    audioUnlocked = true;
+    try{
+      const AudioCtx = window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        const ctx = new AudioCtx();
+        const buf = ctx.createBuffer(1,1,22050);
+        const src = ctx.createBufferSource();
+        src.buffer=buf; src.connect(ctx.destination); src.start(0);
+        setTimeout(()=>ctx.close(),500);
+      }
+    }catch(e){}
+    if(pendingAudio){ pendingAudio(); pendingAudio=null; }
+  }, {once:true});
+
+  // Rastgele tetikleme: addEntry veya renderSummary çağrısından sonra
+  // Her işlem kaydında %15 ihtimal, gün sonu açılınca %25 ihtimal
+  // Haftada 3 kez, %30 ihtimal - gün bazlı key
+  function bugunKey(){
+    const now = new Date();
+    return 'receb_gun_' + now.getFullYear() + '_' + (now.getMonth()+1) + '_' + now.getDate();
+  }
+  function buHaftaKacKez(){
+    const now = new Date();
+    const gun = now.getDay();
+    const pazartesi = new Date(now);
+    pazartesi.setDate(now.getDate() - (gun===0?6:gun-1));
+    let sayi = 0;
+    for(let i=0; i<7; i++){
+      const d = new Date(pazartesi);
+      d.setDate(pazartesi.getDate()+i);
+      const key = 'receb_gun_' + d.getFullYear() + '_' + (d.getMonth()+1) + '_' + d.getDate();
+      if(localStorage.getItem(key)) sayi++;
+    }
+    return sayi;
+  }
+  window._recebTetikle = function(ihtimal){
+    const key = bugunKey();
+    if(localStorage.getItem(key)) return; // bugün zaten gösterildi
+    if(buHaftaKacKez() >= 3) return;      // bu hafta 3 kez oldu
+    if(Math.random() < 0.30){             // %30 ihtimal
+      localStorage.setItem(key, '1');
+      setTimeout(goster, 800);
+    }
+  };
+})();
+
+</script>
+</body>
+</html>
